@@ -62,6 +62,7 @@ mix::XInputPlatform::XInputPlatform(std::shared_ptr<mi::InputDeviceRegistry> con
     kbd_grabbed{false},
     ptr_grabbed{false}
 {
+    printf("mix::XInputPlatform::XInputPlatform()\n");
 }
 
 void mix::XInputPlatform::start()
@@ -98,6 +99,8 @@ void mix::XInputPlatform::process_input_event()
         XEvent xev;
 
         XNextEvent(x11_connection.get(), &xev);
+        
+        printf("got X event\n");
 
         if (core_keyboard->started() && core_pointer->started())
         {
