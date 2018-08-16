@@ -90,6 +90,8 @@ void mix::XInputPlatform::continue_after_config()
 {
 }
 
+int x_event_count = 0;
+
 void mix::XInputPlatform::process_input_event()
 {
     while(XPending(x11_connection.get()))
@@ -99,8 +101,9 @@ void mix::XInputPlatform::process_input_event()
         XEvent xev;
 
         XNextEvent(x11_connection.get(), &xev);
-        
-        printf("got X event\n");
+
+        x_event_count++;
+        printf("got X event %d\n", x_event_count);
 
         if (core_keyboard->started() && core_pointer->started())
         {
