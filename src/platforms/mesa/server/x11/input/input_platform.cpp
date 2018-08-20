@@ -95,6 +95,8 @@ int x_event_count = 0;
 void mix::XInputPlatform::process_input_event()
 {
     int local_event_count = 0;
+    int focus_in_c = 0;
+    int focus_out_c = 0;
     while(XPending(x11_connection.get()))
     {
         // This code is based on :
@@ -114,6 +116,8 @@ void mix::XInputPlatform::process_input_event()
 #ifdef GRAB_KBD
             case FocusIn:
                 {
+                    focus_in_c ++;
+                    printf("focus in #%d, kbd_grabbed: %s\n", focus_in_c, kbd_grabbed ? "yes" : "no");
                     if (!kbd_grabbed)
                     {
                         auto const& xfiev = xev.xfocus;
@@ -125,6 +129,8 @@ void mix::XInputPlatform::process_input_event()
 
             case FocusOut:
                 {
+                    focus_out_c ++;
+                    printf("focus out #%d, kbd_grabbed: %s\n", focus_out_c, kbd_grabbed ? "yes" : "no");
                     if (kbd_grabbed)
                     {
                         auto const& xfoev = xev.xfocus;
