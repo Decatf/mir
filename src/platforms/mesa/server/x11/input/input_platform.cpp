@@ -107,7 +107,7 @@ void mix::XInputPlatform::process_input_event()
 
         x_event_count++;
         local_event_count++;
-        printf("got X event #%d of type %d\n", x_event_count, xev.type);
+        //printf("got X event #%d of type %d\n", x_event_count, xev.type);
 
         if (core_keyboard->started() && core_pointer->started())
         {
@@ -117,12 +117,12 @@ void mix::XInputPlatform::process_input_event()
             case FocusIn:
                 {
                     focus_in_c ++;
-                    printf("focus in #%d, kbd_grabbed: %s\n", focus_in_c, kbd_grabbed ? "yes" : "no");
+                    auto const& xfiev = xev.xfocus;
+                    printf("focus in #%d, kbd_grabbed: %s, mode: %d\n", focus_in_c, kbd_grabbed ? "yes" : "no", xfiev.mode);
                     if (!kbd_grabbed)
                     {
-                        auto const& xfiev = xev.xfocus;
-                        printf("grab: %d\n", XGrabKeyboard(xfiev.display, xfiev.window, True, GrabModeAsync, GrabModeAsync, CurrentTime));
-                        kbd_grabbed = true;
+                        //printf("grab: %d\n", XGrabKeyboard(xfiev.display, xfiev.window, True, GrabModeAsync, GrabModeAsync, CurrentTime));
+                        //kbd_grabbed = true;
                     }
                     break;
                 }
@@ -130,12 +130,12 @@ void mix::XInputPlatform::process_input_event()
             case FocusOut:
                 {
                     focus_out_c ++;
-                    printf("focus out #%d, kbd_grabbed: %s\n", focus_out_c, kbd_grabbed ? "yes" : "no");
+                    auto const& xfoev = xev.xfocus;
+                    printf("focus out #%d, kbd_grabbed: %s, mode: %d\n", focus_out_c, kbd_grabbed ? "yes" : "no", xfoev.mode);
                     if (kbd_grabbed)
                     {
-                        auto const& xfoev = xev.xfocus;
-                        printf("ungrab: %d\n", XUngrabKeyboard(xfoev.display, CurrentTime));
-                        kbd_grabbed = false;
+                        //printf("ungrab: %d\n", XUngrabKeyboard(xfoev.display, CurrentTime));
+                        //kbd_grabbed = false;
                     }
                     break;
                 }
@@ -309,5 +309,5 @@ void mix::XInputPlatform::process_input_event()
         else
             mir::log_error("input event received with no sink to handle it");
     }
-    printf("got %d X events this iteration\n", local_event_count);
+    //printf("got %d X events this iteration\n", local_event_count);
 }
