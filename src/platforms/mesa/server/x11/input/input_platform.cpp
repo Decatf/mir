@@ -94,6 +94,7 @@ int x_event_count = 0;
 
 void mix::XInputPlatform::process_input_event()
 {
+    int local_event_count = 0;
     while(XPending(x11_connection.get()))
     {
         // This code is based on :
@@ -103,7 +104,8 @@ void mix::XInputPlatform::process_input_event()
         XNextEvent(x11_connection.get(), &xev);
 
         x_event_count++;
-        printf("got X event %d\n", x_event_count);
+        local_event_count++;
+        printf("got X event #%d of type %d\n", x_event_count, xev.type);
 
         if (core_keyboard->started() && core_pointer->started())
         {
@@ -115,7 +117,7 @@ void mix::XInputPlatform::process_input_event()
                     if (!kbd_grabbed)
                     {
                         auto const& xfiev = xev.xfocus;
-                        XGrabKeyboard(xfiev.display, xfiev.window, True, GrabModeAsync, GrabModeAsync, CurrentTime);
+                        printf("grab: %d\n", XGrabKeyboard(xfiev.display, xfiev.window, True, GrabModeAsync, GrabModeAsync, CurrentTime));
                         kbd_grabbed = true;
                     }
                     break;
@@ -126,7 +128,7 @@ void mix::XInputPlatform::process_input_event()
                     if (kbd_grabbed)
                     {
                         auto const& xfoev = xev.xfocus;
-                        XUngrabKeyboard(xfoev.display, CurrentTime);
+                        printf("ungrab: %d\n", XUngrabKeyboard(xfoev.display, CurrentTime));
                         kbd_grabbed = false;
                     }
                     break;
@@ -301,4 +303,5 @@ void mix::XInputPlatform::process_input_event()
         else
             mir::log_error("input event received with no sink to handle it");
     }
+    printf("got %d X events this iteration\n", local_event_count);
 }
