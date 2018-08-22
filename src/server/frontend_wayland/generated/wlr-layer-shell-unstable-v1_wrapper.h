@@ -43,13 +43,13 @@ protected:
     }
 
     virtual void bind(struct wl_client* client, struct wl_resource* resource) { (void)client; (void)resource; }
-    virtual void get_layer_surface(struct wl_client* client, struct wl_resource* resource, uint32_t id, struct wl_resource* surface, std::experimental::optional<struct wl_resource*> const& output, uint32_t layer, std::string const& namespace) = 0;
+    virtual void get_layer_surface(struct wl_client* client, struct wl_resource* resource, uint32_t id, struct wl_resource* surface, std::experimental::optional<struct wl_resource*> const& output, uint32_t layer, std::string const& namespace_) = 0;
 
     struct wl_global* const global;
     uint32_t const max_version;
 
 private:
-    static void get_layer_surface_thunk(struct wl_client* client, struct wl_resource* resource, uint32_t id, struct wl_resource* surface, struct wl_resource* output, uint32_t layer, char const* namespace)
+    static void get_layer_surface_thunk(struct wl_client* client, struct wl_resource* resource, uint32_t id, struct wl_resource* surface, struct wl_resource* output, uint32_t layer, char const* namespace_)
     {
         auto me = static_cast<LayerShellV1*>(wl_resource_get_user_data(resource));
         std::experimental::optional<struct wl_resource*> output_resolved;
@@ -59,7 +59,7 @@ private:
         }
         try
         {
-            me->get_layer_surface(client, resource, id, surface, output_resolved, layer, namespace);
+            me->get_layer_surface(client, resource, id, surface, output_resolved, layer, namespace_);
         }
         catch(...)
         {
