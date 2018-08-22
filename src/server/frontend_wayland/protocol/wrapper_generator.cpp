@@ -27,6 +27,8 @@
 #include <locale>
 #include <stdio.h>
 
+const std::vector<std::string> cpp_reserved_keywords = {"namespace"}; // add to this on an as-needed basis
+
 // remove the path from a file path, leaving only the base name
 std::string remove_file_path(std::string const& path)
 {
@@ -38,10 +40,11 @@ std::string remove_file_path(std::string const& path)
 }
 
 // make sure the name is not a C++ reserved word, could be expanded to get rid of invalid characters if that was needed
-std::string sanitize_name(std::string const& name) {
-    static const std::vector<std::string> reserved_words = {"namespace"}; // add to this on an as-needed basis
+std::string sanitize_name(std::string const& name)
+{
     std::string ret = name;
-    for (auto i: reserved_words) {
+    for (auto const& i: cpp_reserved_keywords)
+    {
         if (i == name)
         {
             ret = name + "_";
@@ -98,7 +101,19 @@ void emit_required_headers(std::ostream& out, std::string const& custom_header)
     out << "#include <boost/throw_exception.hpp>" << std::endl;
     out << "#include <boost/exception/diagnostic_information.hpp>" << std::endl;
     out << std::endl;
+    for (auto const& i: cpp_reserved_keywords)
+    {
+        out << "#define " << i << " " << sanitize_name(i) << std::endl;
+    }
+    out << std::endl;
+    out << "extern \"C\" {" << std::endl;
     out << "#include \"" << custom_header << "\"" << std::endl;
+    out << "}" << std::endl;
+    out << std::endl;
+    for (auto const& i: cpp_reserved_keywords)
+    {
+        out << "#undef " << i << std::endl;
+    }
     out << std::endl;
     out << "#include \"mir/fd.h\"" << std::endl;
     out << "#include \"mir/log.h\"" << std::endl;
