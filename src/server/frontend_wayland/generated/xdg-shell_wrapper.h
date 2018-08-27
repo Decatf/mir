@@ -30,6 +30,12 @@ protected:
     XdgWmBase(struct wl_display* display, uint32_t max_version);
     virtual ~XdgWmBase();
 
+    struct wl_global* const global;
+    uint32_t const max_version;
+
+private:
+    struct Thunks;
+
     virtual void bind(struct wl_client* client, struct wl_resource* resource) { (void)client; (void)resource; }
 
     virtual void destroy(struct wl_client* client, struct wl_resource* resource) = 0;
@@ -37,11 +43,6 @@ protected:
     virtual void get_xdg_surface(struct wl_client* client, struct wl_resource* resource, uint32_t id, struct wl_resource* surface) = 0;
     virtual void pong(struct wl_client* client, struct wl_resource* resource, uint32_t serial) = 0;
 
-    struct wl_global* const global;
-    uint32_t const max_version;
-
-private:
-    struct Thunks;
     static struct xdg_wm_base_interface const vtable;
 };
 
@@ -51,6 +52,12 @@ protected:
     XdgPositioner(struct wl_client* client, struct wl_resource* parent, uint32_t id);
     virtual ~XdgPositioner() = default;
 
+    struct wl_client* const client;
+    struct wl_resource* const resource;
+
+private:
+    struct Thunks;
+
     virtual void destroy() = 0;
     virtual void set_size(int32_t width, int32_t height) = 0;
     virtual void set_anchor_rect(int32_t x, int32_t y, int32_t width, int32_t height) = 0;
@@ -59,11 +66,6 @@ protected:
     virtual void set_constraint_adjustment(uint32_t constraint_adjustment) = 0;
     virtual void set_offset(int32_t x, int32_t y) = 0;
 
-    struct wl_client* const client;
-    struct wl_resource* const resource;
-
-private:
-    struct Thunks;
     static struct xdg_positioner_interface const vtable;
 };
 
@@ -73,17 +75,18 @@ protected:
     XdgSurface(struct wl_client* client, struct wl_resource* parent, uint32_t id);
     virtual ~XdgSurface() = default;
 
+    struct wl_client* const client;
+    struct wl_resource* const resource;
+
+private:
+    struct Thunks;
+
     virtual void destroy() = 0;
     virtual void get_toplevel(uint32_t id) = 0;
     virtual void get_popup(uint32_t id, std::experimental::optional<struct wl_resource*> const& parent, struct wl_resource* positioner) = 0;
     virtual void set_window_geometry(int32_t x, int32_t y, int32_t width, int32_t height) = 0;
     virtual void ack_configure(uint32_t serial) = 0;
 
-    struct wl_client* const client;
-    struct wl_resource* const resource;
-
-private:
-    struct Thunks;
     static struct xdg_surface_interface const vtable;
 };
 
@@ -92,6 +95,12 @@ class XdgToplevel
 protected:
     XdgToplevel(struct wl_client* client, struct wl_resource* parent, uint32_t id);
     virtual ~XdgToplevel() = default;
+
+    struct wl_client* const client;
+    struct wl_resource* const resource;
+
+private:
+    struct Thunks;
 
     virtual void destroy() = 0;
     virtual void set_parent(std::experimental::optional<struct wl_resource*> const& parent) = 0;
@@ -108,11 +117,6 @@ protected:
     virtual void unset_fullscreen() = 0;
     virtual void set_minimized() = 0;
 
-    struct wl_client* const client;
-    struct wl_resource* const resource;
-
-private:
-    struct Thunks;
     static struct xdg_toplevel_interface const vtable;
 };
 
@@ -122,14 +126,15 @@ protected:
     XdgPopup(struct wl_client* client, struct wl_resource* parent, uint32_t id);
     virtual ~XdgPopup() = default;
 
-    virtual void destroy() = 0;
-    virtual void grab(struct wl_resource* seat, uint32_t serial) = 0;
-
     struct wl_client* const client;
     struct wl_resource* const resource;
 
 private:
     struct Thunks;
+
+    virtual void destroy() = 0;
+    virtual void grab(struct wl_resource* seat, uint32_t serial) = 0;
+
     static struct xdg_popup_interface const vtable;
 };
 
